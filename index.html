@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackster Generator</title>
+    <style>
+        #cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+            height: 250px;
+            background-color: beige;
+            margin: 8px;
+            padding: 16px;
+        }
+
+        .card img {
+            width: 75px;
+            height: 75px;
+            mix-blend-mode: multiply;
+            margin-bottom: 16px;
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 4px;
+        }
+
+        .card p {
+            font-size: 1rem;
+            text-align: center;
+            margin: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>HACKSTER</h1>
+    <h2>Card Generator</h2>
+
+    <input type="text" id="playlist_id" placeholder="Playlist ID">
+    <button id="generate">Generate</button>
+    <p id="debug"></p>
+    <div id="cards"></div>
+
+
+
+    <script>
+
+        // 2LOxEzC4KmoWJ9NhW0kz5M
+
+        const generate = document.getElementById('generate');
+        const playlist_id = document.getElementById('playlist_id');
+
+        generate.addEventListener('click', async () => {
+            const tracks = await fetchPlaylistTracks(`https://api.spotify.com/v1/playlists/${playlist_id.value}/tracks`);
+            // document.getElementById("debug").innerText = JSON.stringify(tracks);
+            for (const track of tracks) {
+                const card = buildSongCard(track.id, track.name, track.artist, track.year);
+                document.getElementById("cards").appendChild(card);
+            }
+        });
+
+        const accessToken = 'your_access_token'; // Replace with your actual access token
+        const playlistId = 'playlist_id'; // Replace with the ID of the playlist you want to retrieve
+
+        async function getToken() {
+            const response = await fetch('https://accounts.spotify.com/api/token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Basic MDdiMTIzZjAzNDM5NGIzMWE2ODViYWQxMjdjYzlhMWQ6NWNlYWU4OTExNDQxNGNkY2JmOGNmYmIzNjJjMjg0YTc='
+                },
+                body: 'grant_type=client_credentials'
+            });
+            const data = await response.json();
+            return data.access_token;
+        }
+
+        // Function to recursively fetch all pages of playlist tracks
+        async function fetchPlaylistTracks(url, tracks = []) {
+            const token = await getToken();
+            return await fetch(url, {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Extract the relevant information from the response
+                    const items = data.items.map(item => ({
+                        id: item.track.id,
+                        name: item.track.name.split(' - ')[0],
+                        artist: item.track.artists.map(artist => artist.name).join(', '),
+                        year: item.track.album.release_date.split('-')[0]
+                    }));
+
+                    // Concatenate the extracted tracks to the existing list
+                    tracks = tracks.concat(items);
+
+                    // Check if there are more pages to fetch
+                    if (data.next) {
+                        // Recursively fetch the next page
+                        return fetchPlaylistTracks(data.next, tracks);
+                    } else {
+                        // Return the final list of tracks when all pages have been fetched
+                        return tracks;
+                    }
+                });
+        }
+
+        function buildSongCard(id, name, artist, year) {
+            const card = document.createElement("div");
+            card.classList.add("card");
+
+            const imgNode = document.createElement("img");
+            imgNode.src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${id}`;
+            const titleNode = document.createElement("h3");
+            titleNode.innerText = name;
+            const artistNode = document.createElement("p");
+            artistNode.innerText = artist;
+            const yearNode = document.createElement("p");
+            yearNode.innerText = year;
+            card.appendChild(imgNode);
+            card.appendChild(titleNode);
+            card.appendChild(artistNode);
+            card.appendChild(yearNode);
+            return card;
+        }
+
+    </script>
+</body>
+
+</html>
