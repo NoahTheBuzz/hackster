@@ -6,10 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hackster Generator</title>
     <style>
-        #cards {
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fronts {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            flex-direction: row;
+        }
+
+        .backs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            flex-direction: row-reverse;
+        }
+
+        #cards {
+            display: none;
         }
 
         .card {
@@ -18,10 +38,10 @@
             align-items: center;
             justify-content: center;
             width: 150px;
-            height: 250px;
-            background-color: beige;
-            margin: 8px;
+            height: 150px;
+            background-color: lightblue;
             padding: 16px;
+            border: 1px solid black;
         }
 
         .card img {
@@ -32,7 +52,7 @@
         }
 
         .card h3 {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             text-align: center;
             margin: 4px;
         }
@@ -42,34 +62,78 @@
             text-align: center;
             margin: 2px;
         }
+
+        @media print {
+            .ui {
+                display: none;
+            }
+
+            #cards {
+                display: block;
+            }
+
+            .pagebreak {
+                page-break-before: always;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <h1>HACKSTER</h1>
-    <h2>Card Generator</h2>
+    <h1 class="ui">HACKSTER</h1>
+    <h2 class="ui">Card Generator</h2>
 
-    <input type="text" id="playlist_id" placeholder="Playlist ID">
-    <button id="generate">Generate</button>
-    <p id="debug"></p>
+    <input type="text" id="playlist_id" placeholder="Playlist ID" class="ui" value="1OUfCEtZJ6Fc4e17C5Ln6x">
+    <button id="generate" class="ui">Generate</button>
+    <p id="debug" class="ui"></p>
     <div id="cards"></div>
 
 
 
     <script>
 
-        // 2LOxEzC4KmoWJ9NhW0kz5M
+        // Test playlist ID: 1OUfCEtZJ6Fc4e17C5Ln6x
 
         const generate = document.getElementById('generate');
         const playlist_id = document.getElementById('playlist_id');
 
+        var images = [];
+
         generate.addEventListener('click', async () => {
+            images = [];
             const tracks = await fetchPlaylistTracks(`https://api.spotify.com/v1/playlists/${playlist_id.value}/tracks`);
-            // document.getElementById("debug").innerText = JSON.stringify(tracks);
-            for (const track of tracks) {
-                const card = buildSongCard(track.id, track.name, track.artist, track.year);
-                document.getElementById("cards").appendChild(card);
-            }
+
+            var fronts, pgbreak1, pgbreak2, backs, front, back;
+            tracks.forEach(function (track, index) {
+                if (index % 15 == 0) {
+                    fronts = document.createElement("div");
+                    pgbreak1 = document.createElement("div");
+                    backs = document.createElement("div");
+                    pgbreak2 = document.createElement("div");
+                    fronts.classList.add("fronts");
+                    pgbreak1.classList.add("pagebreak");
+                    backs.classList.add("backs");
+                    pgbreak2.classList.add("pagebreak");
+                }
+                front = buildCardFront(track.name, track.artist, track.year);
+                back = buildCardBack(track.id, track.name);
+                fronts.appendChild(front);
+                backs.appendChild(back);
+                if (index % 15 == 14) {
+                    document.getElementById("cards").appendChild(fronts);
+                    document.getElementById("cards").appendChild(pgbreak1);
+                    document.getElementById("cards").appendChild(backs);
+                    document.getElementById("cards").appendChild(pgbreak2);
+                }
+            });
+            Promise.all(images.map(img => new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+            }))).then(() => {
+                window.print();
+            }).catch(() => {
+                alert("Error creating QR codes");
+            });
         });
 
         const accessToken = 'your_access_token'; // Replace with your actual access token
@@ -120,22 +184,31 @@
                 });
         }
 
-        function buildSongCard(id, name, artist, year) {
+        function buildCardFront(name, artist, year) {
             const card = document.createElement("div");
             card.classList.add("card");
-
-            const imgNode = document.createElement("img");
-            imgNode.src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${id}`;
-            const titleNode = document.createElement("h3");
+            const yearNode = document.createElement("h3");
+            yearNode.innerText = year;
+            const titleNode = document.createElement("p");
             titleNode.innerText = name;
             const artistNode = document.createElement("p");
             artistNode.innerText = artist;
-            const yearNode = document.createElement("p");
-            yearNode.innerText = year;
-            card.appendChild(imgNode);
+            card.appendChild(yearNode);
             card.appendChild(titleNode);
             card.appendChild(artistNode);
-            card.appendChild(yearNode);
+            return card;
+        }
+
+        function buildCardBack(id, name) {
+            const card = document.createElement("div");
+            card.classList.add("card");
+            const imgNode = document.createElement("img");
+            imgNode.src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${id}`;
+            card.appendChild(imgNode);
+            images.push(imgNode);
+            //const titleNode = document.createElement("h3");
+            //titleNode.innerText = name;
+            //card.appendChild(titleNode);
             return card;
         }
 
