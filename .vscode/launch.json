@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "hackster-app",
+            "cwd": "hackster-app",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "hackster-app (profile mode)",
+            "cwd": "hackster-app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "hackster-app (release mode)",
+            "cwd": "hackster-app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
