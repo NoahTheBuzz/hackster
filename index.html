@@ -5,13 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hackster Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Space Mono';
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            background: black
+        }
+
+        h1 {
+            font-family: 'Bruno Ace';
+            font-size: 3rem;
+            margin: 0;
+            color: #4DFFDF;
+        }
+
+        h2 {
+            color: #4DFFDF;
+        }
+
+        p {
+            color: #4DFFDF;
         }
 
         .fronts {
@@ -36,31 +57,36 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            width: 150px;
-            height: 150px;
-            background-color: lightblue;
-            padding: 16px;
-            border: 1px solid black;
+            justify-content: space-between;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(180deg, #000 0%, #00392F 100%);
+            padding: 24px 16px;
+            box-sizing: border-box;
+            border: 1px solid #4DFFDF;
         }
 
         .card img {
             width: 75px;
             height: 75px;
-            mix-blend-mode: multiply;
+            mix-blend-mode: screen;
             margin-bottom: 16px;
         }
 
         .card h3 {
-            font-size: 1.5rem;
+            font-family: 'Bruno Ace';
+            font-size: 1.7rem;
             text-align: center;
             margin: 4px;
+            color: #4DFFDF;
         }
 
         .card p {
-            font-size: 1rem;
+            font-family: 'Space Mono';
+            font-size: 0.8rem;
             text-align: center;
             margin: 2px;
+            color: #4DFFDF;
         }
 
         @media print {
@@ -68,6 +94,7 @@
             body {
                 margin: 0;
                 padding: 0;
+                background: white;
             }
 
             .ui {
@@ -88,6 +115,7 @@
 <body>
     <h1 class="ui">HACKSTER</h1>
     <h2 class="ui">Card Generator</h2>
+    <p class="ui">Paste your Spotify playlist ID here:</p>
 
     <input type="text" id="playlist_id" placeholder="Playlist ID" class="ui" value="1OUfCEtZJ6Fc4e17C5Ln6x">
     <button id="generate" class="ui">Generate</button>
@@ -192,7 +220,7 @@
 
         function buildCardFront(name, artist, year) {
             const card = document.createElement("div");
-            card.classList.add("card");
+            card.classList.add("card", "front");
             const yearNode = document.createElement("h3");
             yearNode.innerText = year;
             const titleNode = document.createElement("p");
@@ -200,17 +228,18 @@
             titleNode.style.fontWeight = "bold";
             const artistNode = document.createElement("p");
             artistNode.innerText = artist;
+
+            card.appendChild(artistNode);
             card.appendChild(yearNode);
             card.appendChild(titleNode);
-            card.appendChild(artistNode);
             return card;
         }
 
         function buildCardBack(id, name) {
             const card = document.createElement("div");
-            card.classList.add("card");
+            card.classList.add("card", "back");
             const imgNode = document.createElement("img");
-            imgNode.src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=spotify:track:${id}`;
+            imgNode.src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&color=4DFFDF&bgcolor=000&data=spotify:track:${id}`;
             card.appendChild(imgNode);
             images.push(imgNode);
             //const titleNode = document.createElement("h3");
