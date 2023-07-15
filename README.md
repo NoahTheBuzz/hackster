@@ -7,5 +7,3 @@ as well as
 
 The webapp should work out-of-the-box as it is just a simple HTML file.
 The mobile app can be built for Android using Flutter (iOS support may or may not come in the future). There is also an APK file included in the "Releases" section. Full song playback requires a Spotify Premium account.
-
-"HITSTER" is a brand by Slaettaratindur AB Stockholm and Royal Jumbo BV Toys & Games Ltd.
