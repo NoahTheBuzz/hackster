@@ -1,8 +1,7 @@
 # HACKSTER
 An open-source song guessing game.
 This repository includes code for 
-* a webapp that allows people to create and print their own playing cards from public Spotify playlists,
-as well as
+* a webapp that allows people to create and print their own playing cards from public Spotify playlists, hosted at https://thefreal.github.io/hackster
 * an app that allows users to scan these playing cards and play the encoded songs in the background.
 
 The webapp should work out-of-the-box as it is just a simple HTML file.
