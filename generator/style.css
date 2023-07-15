@@ -1,0 +1,196 @@
+body {
+    margin: 40px;
+    font-family: 'Space Mono';
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: black
+}
+
+h1 {
+    font-family: 'Bruno Ace';
+    font-size: 3rem;
+    margin: 0;
+    color: #4DFFDF;
+    text-shadow: #4DFFDF 0px 0px 20px;
+}
+
+h2 {
+    color: #4DFFDF;
+}
+
+p {
+    color: #4DFFDF;
+}
+
+input[type=text] {
+    width: 100%;
+    max-width: 400px;
+    height: 40px;
+    margin: 8px 0;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #4DFFDF;
+    background: transparent;
+    color: #4DFFDF;
+    font-family: 'Space Mono';
+    font-size: 1rem;
+    transition: 0.2s;
+}
+
+input[type=text]:focus {
+    outline: none;
+    box-shadow: #4DFFDF 0px 0px 12px;
+}
+
+#sizes,
+#colors {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#sizes,
+#colors>p {
+    margin: 0px;
+}
+
+input[type=radio] {
+    accent-color: #4DFFDF;
+    margin-left: 16px;
+}
+
+label {
+    color: #4DFFDF;
+}
+
+button {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 32px;
+    padding: 16px;
+    color: black;
+    background: #4DFFDF;
+    font-family: 'Space Mono';
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: 0.5s;
+}
+
+button:hover {
+    background: #4dffdeb1;
+}
+
+button:disabled {
+    background: #00392F;
+}
+
+button:disabled:hover {
+    background: #00392F;
+    cursor: default;
+}
+
+.fronts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.backs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: row-reverse;
+}
+
+#cards {
+    display: none;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(180deg, #000 0%, #00392F 100%) !important;
+    padding: 24px 16px;
+    box-sizing: border-box;
+    border: 1px solid #4DFFDF;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+}
+
+.card.lite {
+    background: white !important;
+    border: 1px solid gray;
+}
+
+.card.lite>img {
+    filter: invert(1) grayscale(1);
+    mix-blend-mode: multiply;
+}
+
+.card.lite>h3,
+.card.lite>p {
+    color: black;
+    text-shadow: none;
+}
+
+.back {
+    justify-content: center;
+}
+
+.card img {
+    width: 100px;
+    height: 100px;
+    mix-blend-mode: screen;
+}
+
+.card h3 {
+    font-family: 'Bruno Ace';
+    font-size: 1.9rem;
+    text-align: center;
+    margin: 4px;
+    color: #4DFFDF;
+    text-shadow: #4DFFDF 0px 0px 32px;
+}
+
+.card p {
+    font-family: 'Space Mono';
+    font-size: 0.8rem;
+    text-align: center;
+    margin: 2px;
+    color: #4DFFDF;
+}
+
+@media print {
+
+    body {
+        margin: 0;
+        padding: 0;
+        background: white;
+    }
+
+    .ui {
+        display: none;
+    }
+
+    #cards {
+        display: block;
+    }
+
+    .pagebreak {
+        page-break-before: always;
+    }
+
+    .pagebreak:last-child {
+        page-break-before: avoid;
+    }
+}
