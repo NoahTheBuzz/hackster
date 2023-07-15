@@ -37,6 +37,70 @@
             color: #4DFFDF;
         }
 
+        input[type=text] {
+            width: 100%;
+            max-width: 400px;
+            height: 40px;
+            margin: 8px 0;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #4DFFDF;
+            background: transparent;
+            color: #4DFFDF;
+            font-family: 'Space Mono';
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        input[type=text]:focus {
+            outline: none;
+            box-shadow: #4DFFDF 0px 0px 12px;
+        }
+
+        #sizes {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+
+        input[type=radio] {
+            accent-color: #4DFFDF;
+            margin-left: 16px;
+        }
+
+        label {
+            color: #4DFFDF;
+        }
+
+        button {
+            width: 100%;
+            max-width: 400px;
+            margin: 8px 0;
+            padding: 16px;
+            color: black;
+            background: #4DFFDF;
+            font-family: 'Space Mono';
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            transition: 0.5s;
+        }
+
+        button:hover {
+            background: #4dffdeb1;
+        }
+
+        button:disabled {
+            background: #00392F;
+        }
+
+        button:disabled:hover {
+            background: #00392F;
+            cursor: default;
+        }
+
         .fronts {
             display: flex;
             flex-wrap: wrap;
@@ -116,6 +180,10 @@
             .pagebreak {
                 page-break-before: always;
             }
+
+            .pagebreak:last-child {
+                page-break-before: avoid;
+            }
         }
     </style>
 </head>
@@ -123,9 +191,16 @@
 <body>
     <h1 class="ui">HACKSTER</h1>
     <h2 class="ui">Card Generator</h2>
-    <p class="ui">Paste your Spotify playlist ID here:</p>
+    <p class="ui">Paste your Spotify playlist link/ID here:</p>
 
     <input type="text" id="playlist_id" placeholder="Playlist ID" class="ui" value="1OUfCEtZJ6Fc4e17C5Ln6x">
+    <div id="sizes" class="ui">
+        <p class="ui">Print size:</p>
+        <input type="radio" id="size_a4" name="size" value="15" class="ui" checked>
+        <label for="size_a4" class="ui">A4</label>
+        <input type="radio" id="size_a3" name="size" value="35" class="ui">
+        <label for="size_a3" class="ui">A3</label>
+    </div>
     <button id="generate" class="ui">Generate</button>
     <p id="debug" class="ui"></p>
     <div id="cards"></div>
@@ -137,17 +212,38 @@
         // Test playlist ID: 1OUfCEtZJ6Fc4e17C5Ln6x
 
         const generate = document.getElementById('generate');
-        const playlist_id = document.getElementById('playlist_id');
+        const playlist_id_input = document.getElementById('playlist_id');
 
         var images = [];
 
         generate.addEventListener('click', async () => {
             images = [];
-            const tracks = await fetchPlaylistTracks(`https://api.spotify.com/v1/playlists/${playlist_id.value}/tracks`);
 
-            var fronts, pgbreak1, pgbreak2, backs, front, back;
+            var id = getPlaylistId(playlist_id_input.value);
+
+            console.log(id);
+
+            if (id == null) {
+                document.getElementById("debug").innerHTML = "Invalid playlist ID";
+                return;
+            } else {
+                document.getElementById("debug").innerHTML = "Loading...";
+                generate.disabled = true;
+            }
+
+            const tracks = await fetchPlaylistTracks(`https://api.spotify.com/v1/playlists/${id}/tracks`);
+
+            generate.disabled = false;
+            document.getElementById("debug").innerHTML = "";
+
+            var fronts, pgbreak1, pgbreak2, backs, front, back, batch;
+            if (document.getElementById("size_a4").checked && !document.getElementById("size_a3").checked) {
+                batch = 15;
+            } else if (document.getElementById("size_a3").checked && !document.getElementById("size_a4").checked) {
+                batch = 35;
+            }
             tracks.forEach(function (track, index) {
-                if (index % 15 == 0) {
+                if (index % batch == 0) {
                     fronts = document.createElement("div");
                     pgbreak1 = document.createElement("div");
                     backs = document.createElement("div");
@@ -161,7 +257,7 @@
                 back = buildCardBack(track.id, track.name);
                 fronts.appendChild(front);
                 backs.appendChild(back);
-                if (index % 15 == 14) {
+                if (index % batch == batch - 1) {
                     document.getElementById("cards").appendChild(fronts);
                     document.getElementById("cards").appendChild(pgbreak1);
                     document.getElementById("cards").appendChild(backs);
@@ -178,9 +274,6 @@
             });
         });
 
-        const accessToken = 'your_access_token'; // Replace with your actual access token
-        const playlistId = 'playlist_id'; // Replace with the ID of the playlist you want to retrieve
-
         async function getToken() {
             const response = await fetch('https://accounts.spotify.com/api/token', {
                 method: 'POST',
@@ -192,6 +285,20 @@
             });
             const data = await response.json();
             return data.access_token;
+        }
+
+        function getPlaylistId(input) {
+            // Check if the input is a valid playlist ID.
+            if (input.match(/^[0-9a-zA-Z]{22}$/)) {
+                return input;
+            }
+
+            // The input is a playlist link.
+            // Extract the playlist ID from the link.
+            const uri = new URL(input);
+            const path = uri.pathname;
+            const playlistId = path.substring(path.lastIndexOf("/") + 1);
+            return playlistId;
         }
 
         // Function to recursively fetch all pages of playlist tracks
