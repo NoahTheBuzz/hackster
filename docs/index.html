@@ -164,12 +164,21 @@
             })
                 .then(response => response.json())
                 .then(data => {
+                    // filter everything from a compilation
+                    let filtered = data.items.filter(item => item.track.album.album_type != "compilation")
+                    if (filtered.length == 0) {
+                        alert("No tracks found. Make sure the playlist is not empty and does not contain only compilations.");
+                        return;
+                    }
+                    if (filtered.length < data.items.length) {
+                        document.getElementById("debug").innerHTML = "Loading...<br>Note: Compilatiions will be excluded, as they do not have accurate release dates.";
+                    }
                     // Extract the relevant information from the response
-                    const items = data.items.map(item => ({
+                    const items = filtered.map(item => ({
                         id: item.track.id,
                         name: item.track.name.split(' - ')[0],
                         artist: item.track.artists.map(artist => artist.name).join(', '),
-                        year: item.track.album.release_date.split('-')[0]
+                        year: item.track.album.release_date.split('-')[0],
                     }));
 
                     // Concatenate the extracted tracks to the existing list
