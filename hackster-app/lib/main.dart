@@ -6,6 +6,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:spotify_sdk/models/image_uri.dart';
 import 'package:spotify_sdk/models/track.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
+import 'package:wakelock/wakelock.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +30,11 @@ class MyApp extends StatelessWidget {
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
         overlays: [SystemUiOverlay.top]);
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
 
     return MaterialApp(
       title: 'HACKSTER',
@@ -237,6 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (track?.imageUri != null && track?.imageUri != event.track?.imageUri) {
         updateImage(track!.imageUri);
       }
+      Wakelock.toggle(enable: !event.isPaused);
       setState(() {
         playing = !event.isPaused;
         track = event.track;
