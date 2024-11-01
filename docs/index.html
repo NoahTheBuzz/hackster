@@ -219,7 +219,8 @@
             const card = document.createElement("div");
             card.classList.add("card", "back");
             const imgNode = document.createElement("img");
-            imgNode.src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&color=4DFFDF&bgcolor=000&data=spotify:track:${id}`;
+            /*imgNode.src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&color=4DFFDF&bgcolor=000&data=spotify:track:${id}`;*/
+            imgNode.src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&color=FFFFFF&bgcolor=000&data=spotify:track:${id}`;
             card.appendChild(imgNode);
             images.push(imgNode);
             //const titleNode = document.createElement("h3");

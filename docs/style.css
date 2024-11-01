@@ -151,7 +151,7 @@ button:disabled:hover {
 }
 
 .card img {
-    filter: grayscale(1);
+    /*filter: grayscale(1);*/
     width: 150px;
     height: 150px;
     mix-blend-mode: screen;
