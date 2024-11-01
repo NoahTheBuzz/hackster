@@ -118,12 +118,14 @@ button:disabled:hover {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    width: 300px;
-    height: 300px;
-    background: linear-gradient(180deg, #000 0%, #00392F 100%) !important;
+    width: 200px;
+    height: 200px;
+    /*background: linear-gradient(180deg, #000 0%, #00392F 100%) !important;*/
+    background: linear-gradient(180deg, #000 0%, rgb(31, 31, 31) 100%) !important;
     padding: 24px 16px;
     box-sizing: border-box;
-    border: 1px solid #4DFFDF;
+    /*border: 1px solid #4DFFDF;*/
+    border: 1px solid white;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
 }
@@ -149,8 +151,9 @@ button:disabled:hover {
 }
 
 .card img {
-    width: 175px;
-    height: 175px;
+    filter: grayscale(1);
+    width: 150px;
+    height: 150px;
     mix-blend-mode: screen;
 }
 
@@ -159,8 +162,10 @@ button:disabled:hover {
     font-size: 1.9rem;
     text-align: center;
     margin: 4px;
-    color: #4DFFDF;
-    text-shadow: #4DFFDF 0px 0px 32px;
+    /*color: #4DFFDF;
+    text-shadow: #4DFFDF 0px 0px 32px;*/
+    color: white;
+    text-shadow: white 0px 0px 32px;
 }
 
 .card p {
@@ -168,7 +173,8 @@ button:disabled:hover {
     font-size: 0.8rem;
     text-align: center;
     margin: 2px;
-    color: #4DFFDF;
+    /*color: #4DFFDF;*/
+    color: white;
 }
 
 @media print {
